@@ -1,0 +1,30 @@
+web:
+  port: 8080
+
+ui:
+  title: "Gus Status Dashboard"
+  description: "Gatus monitoring dashboard deployed on AWS ECS Fargate"
+
+endpoints:
+  - name: GitHub
+    group: External
+    url: https://github.com
+    interval: 60s
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: Gatus Health
+    group: Internal
+    url: http://localhost:8080/health
+    interval: 30s
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: Gus Threat Composer
+    group: Internal
+    url: https://tm.gus-threat-modelling-tool.com
+    interval: 30s
+    conditions:
+      - "[STATUS] == 200"
+
+
