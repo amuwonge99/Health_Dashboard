@@ -4,7 +4,7 @@ resource "aws_security_group" "ecs" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "Allow traffic from ALB on port 8080"
+    description     = "Allow traffic from ALB on port 8080"
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
@@ -72,35 +72,35 @@ resource "aws_ecs_task_definition" "gatus" {
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
 
   container_definitions = jsonencode([{
-  name      = "gatus"
-  image     = "${var.ecr_repo_url}:${var.image_tag}"
-  essential = true
+    name      = "gatus"
+    image     = "${var.ecr_repo_url}:${var.image_tag}"
+    essential = true
 
-  portMappings = [{
-    containerPort = 8080
-    protocol      = "tcp"
-  }]
+    portMappings = [{
+      containerPort = 8080
+      protocol      = "tcp"
+    }]
 
-  environment = [
-    {
-      name  = "GATUS_CONFIG_PATH"
-      value = "/config/config.yaml"
-    },
-    {
-      name  = "GATUS_LOG_LEVEL"
-      value = "INFO"
+    environment = [
+      {
+        name  = "GATUS_CONFIG_PATH"
+        value = "/config/config.yaml"
+      },
+      {
+        name  = "GATUS_LOG_LEVEL"
+        value = "INFO"
+      }
+    ]
+
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = "/ecs/${var.environment}-gatus"
+        awslogs-region        = "eu-west-2"
+        awslogs-stream-prefix = "ecs"
+      }
     }
-  ]
-
-  logConfiguration = {
-    logDriver = "awslogs"
-    options = {
-      awslogs-group         = "/ecs/${var.environment}-gatus"
-      awslogs-region        = "eu-west-2"
-      awslogs-stream-prefix = "ecs"
-    }
-  }
-}])
+  }])
 
   tags = {
     Name        = "${var.environment}-gatus"
