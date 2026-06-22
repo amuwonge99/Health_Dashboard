@@ -67,7 +67,7 @@ User → Cloudflare DNS → Application Load Balancer (443/HTTPS)
 
 ## Demo
 
-![Browser Demo](health_dashboard_demo.gif)
+![Browser Demo](/project_evidence/health_dashboard_demo.gif)
 
 ---
 
