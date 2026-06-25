@@ -48,7 +48,7 @@ Gatus is an open-source, Go-based uptime and health monitoring tool. This projec
 **Request flow:**
 
 ```
-User → Cloudflare DNS → Application Load Balancer (443/HTTPS)
+User → Cloudflare DNS → CNAME → Application Load Balancer (443/HTTPS)
      → Target Group → ECS Fargate tasks (private subnets, 2x AZ)
 ```
 
@@ -162,7 +162,9 @@ Open `http://localhost:8080` in a browser to see the Gatus dashboard.
 - Route 53 hosted zone and A record (alias to ALB)
 - IAM roles scoped to least privilege for ECS task execution and GitHub Actions OIDC
 
-**ECS module variables** — task CPU, memory, log retention, and AWS region are all parameterised with sensible defaults, allowing different environments to override values without modifying the module:
+**ECS module variables**:
+
+- task CPU, memory, log retention, and AWS region are all parameterised with sensible defaults, allowing different environments to override values without modifying the module:
  
  
 ```hcl
@@ -203,7 +205,7 @@ Four decoupled pipelines, each with a single responsibility:
 | `deploy.yaml` | Merge pull request onto `main` | `terraform apply`, then a post-deploy HTTPS health check against the live URL |
 | `destroy.yaml` | Manual (`workflow_dispatch` only) | `terraform destroy` - never triggered by a push, to avoid accidental teardown |
 
-All AWS authentication uses **OIDC** — no static AWS access keys are stored anywhere in GitHub.
+All AWS authentication uses **OIDC** - no static AWS access keys are stored anywhere in GitHub.
 
 ---
 
@@ -238,7 +240,7 @@ All AWS authentication uses **OIDC** — no static AWS access keys are stored an
 - **Trivy** scans the Docker image for HIGH/CRITICAL CVEs on every build
 - **Checkov** scans Terraform for security misconfigurations on every pull request
 - **tflint** catches Terraform linting issues before merge
-- No secrets committed to the repository — `terraform.tfvars` and `.terraform/` are gitignored; all CI/CD secrets are stored in GitHub Actions secrets
+- No secrets committed to the repository - `terraform.tfvars` and `.terraform/` are gitignored; all CI/CD secrets are stored in GitHub Actions secrets
 
 ---
 
@@ -260,19 +262,19 @@ ECS service deployment failed with CannotPullContainerError - image not found.
 **Fix**: Initial image was pushed with a git SHA tag only. So I added a latest tag and pushed.
 
 **Issue 4**: SSL certificate mismatch.
-The curl returned an SSL error: "no alternative certificate subject name matches target host name 'tm.gus-threat-modelling-tool.com' ".
+The curl returned an SSL error: "no alternative certificate subject name matches target host name tm.gus-threat-modelling-tool.com".
 
 **Fix**: The ACM certificate was issued for the root domain gus-threat-modelling-tool.com but I was attempting to access the app at tm.gus-threat-modelling-tool.com. I requested a new wildcard certificate for *.gus-threat-modelling-tool.com and updated the ALB HTTPS listener to use it.
 
 **Issue 5**: Having to re-clone Gatus source every time.
 Every time the project was set up fresh, the Gatus source code had to be manually cloned into app/ before docker build would work.
 
-**Fix**: I moved the git clone into the Dockerfile so Docker fetches the source at build time
+**Fix**: I moved the git clone into the Dockerfile so Docker fetches the source at build time.
 
 **Issue 6**: Old git history attached to new repo.
 After creating a new GitHub repo, the old git history was still attached locally causing conflicts.
 
-**Fix**: I removed the .git directory then reinitialised
+**Fix**: I removed the .git directory then reinitialised.
 
 ---
 
