@@ -43,7 +43,7 @@ Gatus is an open-source, Go-based uptime and health monitoring tool. This projec
 
 ## Architecture Diagram
 
-![Architecture Diagram](project_evidence/architecture-diagram-updated.png)
+![Architecture Diagram](project_evidence/diagram-2.png)
 
 **Request flow:**
 
