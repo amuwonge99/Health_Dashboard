@@ -178,7 +178,7 @@ The ECS service uses `lifecycle { ignore_changes = [desired_count] }` so Terrafo
 **Remote state:**
 
 - S3 backend, versioned and encrypted
-- Native S3 state locking (`use_lockfile = true`) — no separate DynamoDB table required
+- Native S3 state locking (`use_lockfile = true`) - no separate DynamoDB table required
 
 ```hcl
 terraform {
